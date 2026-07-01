@@ -1,11 +1,13 @@
 """
 model_loader.py
+
 تحميل الموديلات مرة واحدة فقط وقت تشغيل السيرفر.
-- تحميل موديل التماثيل من Hugging Face Hub
+- تحميل موديل تصنيف التماثيل من Hugging Face Hub
 - تحميل classes.txt من Hugging Face Hub
 - إعداد Gemini
 """
 
+import os
 import torch
 import torch.nn as nn
 from torchvision import models
@@ -13,7 +15,6 @@ import google.generativeai as genai
 from huggingface_hub import hf_hub_download
 
 from config import GEMINI_API_KEY, GEMINI_MODEL_NAME
-
 
 # اسم الـ Model Repository على Hugging Face
 HF_REPO_ID = "ahmedelqady88/egyptian-statue-classifier"
@@ -33,17 +34,21 @@ class ModelLoader:
         if self._loaded:
             return
 
-        print("⬇️ Downloading model from Hugging Face...")
+        print("⬇️ Downloading model from Hugging Face Hub...")
 
-        # تحميل الملفات من Hugging Face
+        hf_token = os.getenv("HF_TOKEN")
+
+        # تحميل ملفات الموديل من Hugging Face
         classifier_path = hf_hub_download(
             repo_id=HF_REPO_ID,
             filename="statue_classifier.pth",
+            token=hf_token,
         )
 
         classes_path = hf_hub_download(
             repo_id=HF_REPO_ID,
             filename="classes.txt",
+            token=hf_token,
         )
 
         # قراءة أسماء الكلاسات
@@ -54,7 +59,9 @@ class ModelLoader:
                 if line.strip()
             ]
 
-        # إنشاء الموديل
+        print(f"✅ Loaded {len(self.class_names)} classes")
+
+        # إنشاء موديل ResNet50
         model = models.resnet50(weights=None)
         model.fc = nn.Linear(model.fc.in_features, len(self.class_names))
 
@@ -75,14 +82,18 @@ class ModelLoader:
         if GEMINI_API_KEY:
             genai.configure(api_key=GEMINI_API_KEY)
             self.gemini = genai.GenerativeModel(GEMINI_MODEL_NAME)
+            print("✅ Gemini initialized")
         else:
-            print("⚠️ GEMINI_API_KEY غير موجود.")
+            print("⚠️ GEMINI_API_KEY not found")
 
         self._loaded = True
 
-        print(
-            f"✅ Model Loaded Successfully | Device: {self.device} | Classes: {len(self.class_names)}"
-        )
+        print("=" * 50)
+        print("✅ All models loaded successfully")
+        print(f"Device : {self.device}")
+        print(f"Classes: {len(self.class_names)}")
+        print("=" * 50)
 
 
+# Singleton
 model_loader = ModelLoader()
