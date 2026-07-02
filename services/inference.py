@@ -191,6 +191,11 @@ async def _tts_async(
     language: str,
     output_path: str,
 ):
+    """
+    يحاول التوليد بـ edge-tts (جودة أعلى وفيه تمييز ذكر/أنثى).
+    لو edge-tts فشل (مشكلة معروفة في خدمة مايكروسوفت بترجع 403 بين كل شوية)
+    بيرجع تلقائيًا لـ gTTS كبديل مستقر.
+    """
 
     import edge_tts
 
@@ -207,12 +212,25 @@ async def _tts_async(
             else "en-US-GuyNeural"
         )
 
-    communicate = edge_tts.Communicate(
-        text=text,
-        voice=voice,
-    )
+    try:
+        communicate = edge_tts.Communicate(
+            text=text,
+            voice=voice,
+        )
 
-    await communicate.save(output_path)
+        await communicate.save(output_path)
+
+    except Exception as e:
+
+        print(f"[TTS] edge-tts failed ({e}); falling back to gTTS.")
+
+        from gtts import gTTS
+
+        # gTTS مكتبة sync، بنشغلها في thread منفصل عشان
+        # متعملش block لـ event loop بتاع FastAPI
+        await asyncio.to_thread(
+            lambda: gTTS(text=text, lang=language).save(output_path)
+        )
 
 
 async def text_to_speech(
