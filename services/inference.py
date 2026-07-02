@@ -1,8 +1,6 @@
 """
 inference.py
-
 AI Pipeline
-
 1. Detect Artifact
 2. Generate Story using Gemini
 3. Generate Text-To-Speech
@@ -44,7 +42,6 @@ def detect_artifact(
 ):
     """
     Detect Artifact
-
     Returns
     -------
     predicted_class
@@ -125,52 +122,37 @@ def _story_prompt(
 
             return f"""
 أنتِ {artifact_name}.
-
 احكي قصتك بصيغة المتكلم.
-
 اذكري:
-
 - اسمك.
 - العصر الذي تنتمين إليه.
 - لماذا صُنعتِ.
 - سرًا مميزًا عنك.
-
 الرد يكون بالعربية الفصحى فقط.
-
 بدون أي رموز أو تنسيق.
 """
 
         return f"""
 أنتَ {artifact_name}.
-
 احكِ قصتك بصيغة المتكلم.
-
 اذكر:
-
 - اسمك.
 - العصر الذي تنتمي إليه.
 - لماذا صُنعت.
 - سرًا مميزًا عنك.
-
 الرد يكون بالعربية الفصحى فقط.
-
 بدون أي رموز أو تنسيق.
 """
 
     return f"""
 You are {artifact_name}.
-
 Tell your story in first person.
-
 Include:
-
 - Your name.
 - Historical period.
 - Why you were made.
 - One interesting secret.
-
 Use plain English only.
-
 No markdown.
 No symbols.
 """

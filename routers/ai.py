@@ -41,9 +41,16 @@ async def detect(
         f.write(await image.read())
 
     try:
-        predicted_class, name, gender, confidence, prompt_3d = inference.detect_artifact(temp_path)
+        (
+    predicted_class,
+    name,
+    gender,
+    confidence,
+    prompt_3d,
+    matched,
+) = inference.detect_artifact(temp_path)
 
-        if predicted_class == "unknown":
+        if not matched:
             msg = (
                 "معلش، الصورة دي ملهاش تطابق كافي مع أي تمثال من الـ30 اللي المودل متدرب عليهم "
                 f"(أعلى نسبة تطابق كانت {confidence * 100:.1f}%). جربي صورة أوضح."
