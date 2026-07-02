@@ -215,7 +215,7 @@ async def _tts_async(
     await communicate.save(output_path)
 
 
-def text_to_speech(
+async def text_to_speech(
     text: str,
     gender: str = "male",
     language: str = "ar",
@@ -229,13 +229,11 @@ def text_to_speech(
         OUTPUTS_DIR / f"{request_id}.mp3"
     )
 
-    asyncio.run(
-        _tts_async(
-            text=text,
-            gender=gender,
-            language=language,
-            output_path=output_path,
-        )
+    await _tts_async(
+        text=text,
+        gender=gender,
+        language=language,
+        output_path=output_path,
     )
 
     return output_path

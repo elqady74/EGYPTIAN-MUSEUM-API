@@ -69,7 +69,7 @@ async def detect(
             )
 
         story = inference.generate_story(name, gender, language)
-        audio_path = inference.text_to_speech(story, gender, language, request_id)
+        audio_path = await inference.text_to_speech(story, gender, language, request_id)
 
         response = {
             "matched": True,
