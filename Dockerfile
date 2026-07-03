@@ -2,8 +2,9 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# مكتبات النظام المطلوبة لـ torch/pillow
+# System dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
     build-essential \
     libglib2.0-0 \
     libsm6 \
@@ -18,10 +19,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 COPY . .
 
-# Hugging Face Spaces بتوقع السيرفر شغّال على بورت 7860
 EXPOSE 7860
 
-# مستخدم غير root (Hugging Face Spaces بتفضّل كدا)
 RUN useradd -m appuser
 RUN chown -R appuser:appuser /app
 USER appuser
