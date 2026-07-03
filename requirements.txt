@@ -11,5 +11,5 @@ edge-tts==7.2.1
 gTTS==2.5.4
 huggingface_hub>=0.23.0
 # --- اختياري لو هتفعّلي توليد الـ 3D (ENABLE_3D=true) ---
-# trimesh==4.4.1
-# git+https://github.com/openai/shap-e.git
+trimesh==4.4.1
+git+https://github.com/openai/shap-e.git
